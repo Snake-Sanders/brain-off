@@ -1,7 +1,12 @@
 defmodule Mix.Tasks.Gen.HtmlTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
+  #doctest Mix.Tasks.Gen.HtmlTest
   # alias Mix.Tasks.Gen.Html
-  # doctest Tools
+  doctest Tools
+
+  setup do
+    {:ok, in_p: "./test/inputs/markdown/", out_p: "./test/output/markdown/"}
+  end
 
   test "simple conversion from markdown to html" do
     html = "<p>\nHello&lt;br /&gt;World</p>\n"
@@ -10,46 +15,57 @@ defmodule Mix.Tasks.Gen.HtmlTest do
     assert Mix.Tasks.Gen.Html.parse(markdown) == {:ok, html, []}
   end
 
-  describe "convert a markdown file to html" do
-    test "parsing is correct" do
-      md_file = "./test/inputs/markdown/demo3.md"
+  test "parsing a correct file", %{in_p: in_p} = _ctx do
+    md_file = in_p <> "demo3.md"
 
-      {:ok, html_doc, deprecation_messages} = Mix.Tasks.Gen.Html.convert_file(md_file)
+    {:ok, html_doc, deprecation_messages} = Mix.Tasks.Gen.Html.convert_file(md_file)
 
-      assert String.starts_with?(html_doc, "<h1>\ntable of content</h1>")
-      assert deprecation_messages == []
-    end
+    assert String.starts_with?(html_doc, "<h1>\ntable of content</h1>")
+    assert deprecation_messages == []
+  end
 
-    test "parsing a file list" do
-      md_files = [
-        "./test/inputs/markdown/demo1.md",
-        "./test/inputs/markdown/demo2.md",
-        "./test/inputs/markdown/demo3.md"
-      ]
+  # @tag :skip
+  test "parsing an incorrect file", %{in_p: in_p} = _ctx do
+    md_file = in_p <> "wrong.md"
 
-      # each element in the list is of the type: 
-      # {:ok, html_docs, deprecation_messages}
-      # filter only the :ok of each element in the list
-      # check that all went ok, all are true
-      html_list =
-        md_files
-        |> Mix.Tasks.Gen.Html.convert_files!()
+    {:error, _html_doc, [{:warning, _line, deprecation_messages}]} =
+      Mix.Tasks.Gen.Html.convert_file(md_file)
 
-      # |> Enum.map(fn {:ok, _html, _deprec} -> true end)
-      # |> Enum.all?()
+    assert "Closing unclosed backquotes ` at end of input" == deprecation_messages
+  end
 
-      assert length(html_list) == 3
-    end
+  test "parsing a file list", %{in_p: in_p} = _ctx do
+    # create file paths
+    md_files =
+      ["demo1.md", "demo2.md", "demo3.md"]
+      |> Enum.map(fn f -> in_p <> f end)
 
-    # In order to run this test, I need to find an example of deprecated markdown.
-    @tag :skip
-    test "parsing is incorrect" do
-      md_file = "./test/inputs/markdown/wrong.md"
+    # each element in the list is of the type:
+    # {:ok, html_docs, deprecation_messages}
+    # filter only the :ok of each element in the list
+    # check that all went ok, all are true
+    html_list =
+      md_files
+      |> Mix.Tasks.Gen.Html.convert_files!()
 
-      {:ok, html_doc, deprecation_messages} = Mix.Tasks.Gen.Html.run(md_file)
+    assert length(html_list) == 3
 
-      assert html_doc != nil
-      assert deprecation_messages == []
-    end
+    all_passed =
+      html_list
+      |> Enum.map(fn {:ok, _html, _deprec} -> true end)
+      |> Enum.all?()
+
+    assert all_passed
+  end
+
+  test "parsing a directory", %{in_p: in_p, out_p: out_p} = _ctx do
+    Mix.Tasks.Gen.Html.run(in_p, out_p)
+
+    # check that the output dir was created
+    assert File.dir?(out_p) and File.exists?(out_p)
+
+    assert length(Path.wildcard("#{out_p}*.html")) > 0
+    # expecting that the amount of markdown files in the input dir
+    # is the same as the html files generated in output dir
   end
 end

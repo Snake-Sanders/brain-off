@@ -15,62 +15,76 @@ defmodule Mix.Tasks.Gen.Html do
   use Mix.Task
   require Earmark
 
-  # def run({src: src_path, dst: dst_path}) do
-  #   Earmark.from_file!(md_file)
-  # end
+  # records parsing errors, see log_issue/0
+  @issue_recorder []
 
+  @doc """
+  Main entry point for execution, uses default parameterss
+  """
   def run(_) do
-    # path to directory to search for input files
-    src_path = "./test/inputs/markdown/"
-    dst_path = "./test/output/markdown/"
+    src_path = "./user/markdown/"
+    dst_path = "./web/"
 
-    # sanity check, take only markdown files
-    # todo use: Path.wildcard("./*.md") -> [file.md, file2.md,...]
-    md_files =
-      src_path
-      |> File.ls!()
-      |> Enum.reject(fn file -> File.dir?(file) end)
-      |> Enum.reject(fn file -> Path.extname(file) != ".md" end)
-
-    html_code =
-      md_files
-      |> Enum.map(fn file -> src_path <> file end)
-      |> convert_files!()
-
-    # create the output dir
-    if not File.dir?(dst_path) or
-         not File.exists?(dst_path) do
-      File.mkdir_p!(dst_path)
-    end
-
-    # html_files =
-    md_files
-    |> Enum.map(fn file ->
-      dst_path <> String.replace_trailing(file, ".md", ".html")
-    end)
-    |> Enum.zip(html_code)
-    |> Enum.each(fn {f_path, code} ->
-      File.write(f_path, code)
-    end)
-
-    # html_files
+    run(src_path, dst_path)
   end
 
   @doc """
-  This parses a markdown code block to HTML code
-  `md_code` is the markdown string code
+  Searches for markdown files and converts them to HTML files
+
+  ## Parameters
+
+  - src_path: directory path to search for input markdown files
+  - dst_path: directory path to write the generated html files
+  """
+  def run(src_path, dst_path) do
+    # create the output dir if it does not exist
+    if is_valid_dir(dst_path) do
+      File.mkdir_p!(dst_path)
+    end
+
+    "#{src_path}*.md"
+    # search for md files
+    |> Path.wildcard()
+    |> convert_files!()
+    |> Enum.each(fn item ->
+      write_out_converted_files(item, dst_path)
+    end)
+
+    log_issue()
+  end
+
+  @doc """
+  Converts a markdown code block to HTML code
+
+  ## Parameters
+
+  - md_code: it is the markdown string code
+
+  ## Example
+
+      iex> markdown = "Hello<br />World"
+      iex> Mix.Tasks.Gen.Html.parse(markdown)
+      "<p>\nHello&lt;br /&gt;World</p>\n"
+
   """
   def parse(md_code) when is_bitstring(md_code) do
     Earmark.as_html(md_code, [])
   end
 
   @doc """
+  Converts a markdown file to HTML
+
   Opens a markdown file from the `path` argument
+  and returns the content in HTML format
+
+  ## Parameters
+
+  - path: Markdown file path
 
   return:
-    {:ok, html_doc, []}                  
+    {:ok, html_doc, []}
     {:ok, html_doc, deprecation_messages}
-    {:error, html_doc, error_messages}   
+    {:error, html_doc, error_messages}
   """
   def convert_file(path) when is_bitstring(path) do
     path
@@ -82,10 +96,68 @@ defmodule Mix.Tasks.Gen.Html do
   @doc """
   Opens a list of markdown files and convert the content to HTML.
   It calls `convert_file()`
+  returns [list_html_content, parsing_error_information]
   """
   def convert_files!(paths) when is_list(paths) do
-    paths
-    |> Enum.map(fn p -> convert_file(p) end)
-    |> Enum.map(fn {:ok, html_content, _deprec} -> html_content end)
+    for path <- paths do
+      file_name = Path.basename(path)
+
+      case convert_file(path) do
+        {:ok, html_content, _deprec} -> {:ok, file_name, html_content}
+        warn_msg -> {:error, file_name, warn_msg}
+      end
+    end
+  end
+
+  # `warn_list` is of the type [{:warning, line_numb, err_message}, {...}]
+  defp rec_issue(file, {:error, _contetn, warn_list} = _warn_msg) do
+    @issue_recorder ++ [{file, warn_list}]
+  end
+
+  # Error messages from Markdown files which failed to be parsed are stored in
+  # a global variable @issue_recorder
+  defp log_issue() do
+    if length(@issue_recorder) > 0 do
+      IO.puts("Failed parsing the files")
+
+      @issue_recorder
+      |> Enum.each(fn {file, warn_list} ->
+        IO.puts("#{file}:")
+
+        Enum.each(warn_list, &print_file_warns/1)
+      end)
+    end
+  end
+
+  # Prints the list of warning messages detected when parsing a markdown file
+  # The format of the function parameter is as it is defined by Earmark
+  defp print_file_warns({err_level, line_numb, msg}) do
+    IO.puts("[#{err_level}] #[#{line_numb}]: #{msg}")
+  end
+
+  # check if a directory path is valid
+  #
+  ## Parameters
+  #
+  # - dir_path: path to a directory
+  defp is_valid_dir(dir_path) do
+    File.dir?(dir_path) and File.exists?(dir_path)
+  end
+
+  # Writes out html files inro the destination path `dst_path`
+  # Files with parsing errors are not written just logged as info
+  #
+  ## Parameters
+  #
+  # - data_list: list of {parse_status, file_name, html_code}
+  defp write_out_converted_files(data_list, dst_path) do
+    case data_list do
+      {:ok, file, content} ->
+        (dst_path <> String.replace_trailing(file, ".md", ".html"))
+        |> File.write(content)
+
+      {:error, file, warn_msg} ->
+        rec_issue(file, warn_msg)
+    end
   end
 end
