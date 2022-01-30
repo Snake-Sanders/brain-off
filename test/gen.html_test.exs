@@ -1,7 +1,5 @@
 defmodule Mix.Tasks.Gen.HtmlTest do
   use ExUnit.Case, async: true
-  #doctest Mix.Tasks.Gen.HtmlTest
-  # alias Mix.Tasks.Gen.Html
   doctest Tools
 
   setup do
@@ -59,6 +57,14 @@ defmodule Mix.Tasks.Gen.HtmlTest do
   end
 
   test "parsing a directory", %{in_p: in_p, out_p: out_p} = _ctx do
+    # clean output
+    case File.rm_rf(out_p) do
+      # cleared dirs ok
+      {:ok, _del_files} -> true
+      {:error, reason, file} -> IO.puts("failed deleting #{file}: #{reason}")
+      _ -> IO.puts("?")
+    end
+
     Mix.Tasks.Gen.Html.run(in_p, out_p)
 
     # check that the output dir was created
