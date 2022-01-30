@@ -50,6 +50,7 @@ defmodule Mix.Tasks.Gen.Html do
       write_out_converted_files(item, dst_path)
     end)
 
+    copy_images("#{src_path}img", "#{dst_path}img")
     log_issue()
   end
 
@@ -158,6 +159,12 @@ defmodule Mix.Tasks.Gen.Html do
 
       {:error, file, warn_msg} ->
         rec_issue(file, warn_msg)
+    end
+  end
+
+  defp copy_images(src_path, dst_path) do
+    if File.dir?(src_path) do
+      File.cp_r(src_path, dst_path)
     end
   end
 end

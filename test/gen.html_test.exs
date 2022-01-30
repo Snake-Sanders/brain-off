@@ -64,8 +64,22 @@ defmodule Mix.Tasks.Gen.HtmlTest do
     # check that the output dir was created
     assert File.dir?(out_p) and File.exists?(out_p)
 
-    assert length(Path.wildcard("#{out_p}*.html")) > 0
     # expecting that the amount of markdown files in the input dir
     # is the same as the html files generated in output dir
+    # to check the exact number html files the failed number should be known.
+    assert length(Path.wildcard("#{out_p}*.html")) > 0
+
+    # if there are images to be copied
+    img_p = "#{in_p}img"
+
+    if File.dir?(img_p) do
+      case File.ls(img_p) do
+        {:ok, files} ->
+          assert {:ok, files} == File.ls("#{out_p}img")
+
+        _ ->
+          []
+      end
+    end
   end
 end
