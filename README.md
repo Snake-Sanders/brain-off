@@ -1,21 +1,10 @@
 # Tools
 
-**TODO: Add description**
+This is a simple command line tool written in Elixir. It converts markdown files into HTML pages. It is nothing special, just uses [Earmark](https://github.com/pragdave/earmark) module.
+It is more convinient to have all the personal notes in a single browser's tab than having to open the markdown files individually and using the VSCode preview each time, additionally it is annying to mix code and markdown notes in the same working space.
 
-## Installation
+## Configuration and execution
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `tools` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:tools, "~> 0.1.0"}
-  ]
-end
-```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/tools](https://hexdocs.pm/tools).
-
+- Place your markdown file in the folder `./user/makrdown`
+- run the mix command: `mix gen.html`
+- the html page will be generated in `./web` folder
