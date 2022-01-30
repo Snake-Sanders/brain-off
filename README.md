@@ -8,4 +8,4 @@ It is more convinient to have all the personal notes in a single browser's tab t
 - Place your markdown file in the folder `./user/makrdown`
 - If there are images place them in the folder `./user/makrdown/img`
 - run the mix command: `mix gen.html`
-- the html page will be generated in `./web` folder
+- the html page will be generated in `./user/web` folder

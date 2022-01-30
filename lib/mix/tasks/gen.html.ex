@@ -23,7 +23,7 @@ defmodule Mix.Tasks.Gen.Html do
   """
   def run(_) do
     src_path = "./user/markdown/"
-    dst_path = "./web/"
+    dst_path = "./user/web/"
 
     run(src_path, dst_path)
   end
@@ -38,8 +38,14 @@ defmodule Mix.Tasks.Gen.Html do
   """
   def run(src_path, dst_path) do
     # create the output dir if it does not exist
-    if is_valid_dir(dst_path) do
-      File.mkdir_p!(dst_path)
+    if not is_valid_dir(dst_path) do
+      case File.mkdir_p!(dst_path) do
+        :ok ->
+          true
+
+        {error, reason} ->
+          IO.puts("Failed creating output dir. #{error}: #{reason}")
+      end
     end
 
     "#{src_path}*.md"
