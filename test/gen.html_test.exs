@@ -38,13 +38,16 @@ defmodule Mix.Tasks.Gen.HtmlTest do
       ["demo1.md", "demo2.md", "demo3.md"]
       |> Enum.map(fn f -> in_p <> f end)
 
+    # todo move this to config
+    page_layout = "./user/template/page.html.eex"
+
     # each element in the list is of the type:
     # {:ok, html_docs, deprecation_messages}
     # filter only the :ok of each element in the list
     # check that all went ok, all are true
     html_list =
       md_files
-      |> Mix.Tasks.Gen.Html.convert_files!()
+      |> Mix.Tasks.Gen.Html.convert_files!(page_layout)
 
     assert length(html_list) == 3
 
@@ -87,5 +90,8 @@ defmodule Mix.Tasks.Gen.HtmlTest do
           []
       end
     end
+
+    idx_html = out_p <> "index.html"
+    assert File.exists?(idx_html)
   end
 end

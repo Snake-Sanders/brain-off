@@ -25,5 +25,15 @@ tools-*.tar
 # Temporary files, for example, from tests.
 /tmp/
 
-# test temp folder 
+# test temp folder
 /test/output
+
+# ignore dev tools
+tailwind/
+
+# ignore user's notes files
+user/markdown/*.md
+
+# ignore generated pages
+user/web/
+

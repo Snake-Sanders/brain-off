@@ -1,0 +1,42 @@
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Brain-off</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/uikit.min.css" />
+  <script src="js/uikit.min.js"></script>
+  <script src="js/uikit-icons.min.js"></script>
+</head>
+<body>
+  <nav class="uk-navbar-container" uk-navbar>
+    <div class="uk-navbar-left">
+      <ul class="uk-navbar-nav">
+        <li class="uk-active"><a href="#">Times</a></li>
+        <li class="uk-parent"><a href="#">Jira</a></li>
+        <li class="uk-parent"><a href="#">Bitbucket</a></li>
+        <li class="uk-parent"><a href="#">Confluence</a></li>
+        <li class="uk-parent"><a href="#">Jenkins</a></li>
+        <li class="uk-parent"><a href="#">PTC</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main role="main" class="grow flex flex-col h-screen">
+
+    <div class="uk-child-width-1-2@s" uk-grid>
+      <div>
+          <ul class="uk-tab-right" uk-tab>
+            <%= for {title, href} <- titels_href do %>
+              <li class="uk-active"><a href="<%= href %>"><%= title %></a></li>
+            <% end %>
+          </ul>
+      </div>
+    </div>
+  </main>
+  <footer>
+  Genereted <!-- <% DateTime.utc_now |> DateTime.to_string %>= -->
+  </footer>
+</body>
+</html>

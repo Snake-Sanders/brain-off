@@ -1,0 +1,20 @@
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Brain-off</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/uikit.min.css" />
+  <script src="js/uikit.min.js"></script>
+  <script src="js/uikit-icons.min.js"></script>
+</head>
+<body>
+  <main role="main" class="grow flex flex-col h-screen">
+    <%= page_content %>
+  </main>
+  <footer>
+  Genereted <!-- <% DateTime.utc_now |> DateTime.to_string %>= -->
+  </footer>
+</body>
+</html>

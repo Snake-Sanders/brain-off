@@ -14,6 +14,7 @@ defmodule Mix.Tasks.Gen.Html do
 
   use Mix.Task
   require Earmark
+  require EEx
 
   # records parsing errors, see log_issue/0
   @issue_recorder []
@@ -38,23 +39,26 @@ defmodule Mix.Tasks.Gen.Html do
   """
   def run(src_path, dst_path) do
     # create the output dir if it does not exist
-    if not is_valid_dir(dst_path) do
-      case File.mkdir_p!(dst_path) do
-        :ok ->
-          true
+    create_dir(dst_path)
 
-        {error, reason} ->
-          IO.puts("Failed creating output dir. #{error}: #{reason}")
-      end
-    end
+    page_layout = "./user/template/page.html.eex"
 
-    "#{src_path}*.md"
-    # search for md files
-    |> Path.wildcard()
-    |> convert_files!()
-    |> Enum.each(fn item ->
-      write_out_converted_files(item, dst_path)
-    end)
+    html_files =
+      "#{src_path}*.md"
+      |> Path.wildcard()
+      |> convert_files!(page_layout)
+      |> Enum.filter(fn {status, _file, _content} -> status == :ok end)
+      |> Enum.map(fn {:ok, md_file, html_content} ->
+        write_out_html_file({md_file, html_content}, dst_path)
+      end)
+
+    # create page index with files name as title
+    # and the file location as href link
+    file_index = make_page_index(html_files)
+
+    index_layout = "./user/template/layout.html.eex"
+    layout_code = EEx.eval_file(index_layout, titels_href: file_index)
+    File.write(dst_path <> "index.html", layout_code)
 
     copy_images("#{src_path}img", "#{dst_path}img")
     log_issue()
@@ -100,18 +104,31 @@ defmodule Mix.Tasks.Gen.Html do
     |> Earmark.as_html()
   end
 
-  @doc """
-  Opens a list of markdown files and convert the content to HTML.
-  It calls `convert_file()`
-  returns [list_html_content, parsing_error_information]
-  """
-  def convert_files!(paths) when is_list(paths) do
+  # Opens a list of markdown files and convert the content to HTML.
+  # The content is injected in the HTML template
+  # It calls `convert_file()`
+  #
+  ## Parameters
+  #
+  # - dir_path: path to a directory
+  # - page_layout: path to `page_layout.html.eex` file
+  #
+  # returns [list_html_content, parsing_error_information]
+
+  def convert_files!(paths, page_layout) when is_list(paths) do
     for path <- paths do
       file_name = Path.basename(path)
 
+      # convert markdown to html body
       case convert_file(path) do
-        {:ok, html_content, _deprec} -> {:ok, file_name, html_content}
-        warn_msg -> {:error, file_name, warn_msg}
+        {:ok, html_content, _deprec} ->
+          # injects the html body into the template layout
+          html_page = EEx.eval_file(page_layout, page_content: html_content)
+          {:ok, file_name, html_page}
+
+        warn_msg ->
+          rec_issue(file_name, warn_msg)
+          {:error, file_name, warn_msg}
       end
     end
   end
@@ -151,26 +168,64 @@ defmodule Mix.Tasks.Gen.Html do
     File.dir?(dir_path) and File.exists?(dir_path)
   end
 
-  # Writes out html files inro the destination path `dst_path`
+  # Writes out html file into the destination path `dst_path`
   # Files with parsing errors are not written just logged as info
   #
   ## Parameters
   #
   # - data_list: list of {parse_status, file_name, html_code}
-  defp write_out_converted_files(data_list, dst_path) do
-    case data_list do
-      {:ok, file, content} ->
-        (dst_path <> String.replace_trailing(file, ".md", ".html"))
-        |> File.write(content)
+  defp write_out_html_file({file_name, html_code}, dst_path) do
+    file_path = dst_path <> String.replace_trailing(file_name, ".md", ".html")
+    File.write(file_path, html_code)
+    file_path
+  end
 
-      {:error, file, warn_msg} ->
-        rec_issue(file, warn_msg)
-    end
+  defp write_out_html_file({:ok, file_name, html_code}, dst_path) do
+    file_path = dst_path <> String.replace_trailing(file_name, ".md", ".html")
+    File.write(file_path, html_code)
+    file_path
+  end
+
+  defp write_out_html_file({:error, file_name, warn_msg}, _dst_path) do
+    rec_issue(file_name, warn_msg)
   end
 
   defp copy_images(src_path, dst_path) do
     if File.dir?(src_path) do
       File.cp_r(src_path, dst_path)
+    end
+  end
+
+  defp make_page_index(html_files) do
+    html_files
+    |> Enum.map(fn path ->
+      get_title_from_file_path(path)
+    end)
+  end
+
+  # given a file path, it converts the file name to be used
+  # as table of content item, replacing delimiter symbols
+  # and capitalizing the final titel
+  defp get_title_from_file_path(file_path) do
+    href = "./" <> Path.basename(file_path)
+
+    titel =
+      Path.basename(file_path, ".html")
+      |> String.replace(["-", "_"], " ")
+      |> String.capitalize()
+
+    {titel, href}
+  end
+
+  defp create_dir(path) do
+    if not is_valid_dir(path) do
+      case File.mkdir_p!(path) do
+        :ok ->
+          true
+
+        {error, reason} ->
+          IO.puts("Failed creating output dir #{path}.\n#{error}: #{reason}")
+      end
     end
   end
 end
