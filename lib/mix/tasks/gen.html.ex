@@ -60,7 +60,9 @@ defmodule Mix.Tasks.Gen.Html do
     layout_code = EEx.eval_file(index_layout, titels_href: file_index)
     File.write(dst_path <> "index.html", layout_code)
 
-    copy_images("#{src_path}img", "#{dst_path}img")
+    copy_resources("#{src_path}img", "#{dst_path}img")
+    copy_resources("./user/assets/css", "#{dst_path}css")
+    copy_resources("./user/assets/js", "#{dst_path}js")
     log_issue()
   end
 
@@ -180,17 +182,7 @@ defmodule Mix.Tasks.Gen.Html do
     file_path
   end
 
-  defp write_out_html_file({:ok, file_name, html_code}, dst_path) do
-    file_path = dst_path <> String.replace_trailing(file_name, ".md", ".html")
-    File.write(file_path, html_code)
-    file_path
-  end
-
-  defp write_out_html_file({:error, file_name, warn_msg}, _dst_path) do
-    rec_issue(file_name, warn_msg)
-  end
-
-  defp copy_images(src_path, dst_path) do
+  defp copy_resources(src_path, dst_path) do
     if File.dir?(src_path) do
       File.cp_r(src_path, dst_path)
     end
