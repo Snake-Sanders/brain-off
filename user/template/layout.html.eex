@@ -6,14 +6,15 @@
   <title>Brain-off</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="css/uikit.min.css" />
+  <link rel="stylesheet" href="css/app.css" />
   <script src="js/uikit.min.js"></script>
   <script src="js/uikit-icons.min.js"></script>
 </head>
 <body>
   <nav class="uk-navbar-container" uk-navbar>
-    <div class="uk-navbar-left">
+    <div class="uk-navbar-center">
       <ul class="uk-navbar-nav">
-        <li class="uk-active"><a href="#">Times</a></li>
+        <li class="uk-parent"><a href="#">Times</a></li>
         <li class="uk-parent"><a href="#">Jira</a></li>
         <li class="uk-parent"><a href="#">Bitbucket</a></li>
         <li class="uk-parent"><a href="#">Confluence</a></li>
@@ -36,7 +37,9 @@
     </div>
   </main>
   <footer>
-  Genereted <!-- <% DateTime.utc_now |> DateTime.to_string %>= -->
+  <p uk-text-muted>
+  Genereted <%= DateTime.utc_now |> DateTime.to_string %>
+  </p>
   </footer>
 </body>
 </html>
