@@ -41,7 +41,7 @@ defmodule Mix.Tasks.Gen.Html do
     # create the output dir if it does not exist
     create_dir(dst_path)
 
-    page_layout = "./user/template/page.html.eex"
+    page_layout = "./lib/template/page.html.eex"
 
     html_files =
       "#{src_path}*.md"
@@ -56,13 +56,13 @@ defmodule Mix.Tasks.Gen.Html do
     # and the file location as href link
     file_index = make_page_index(html_files)
 
-    index_layout = "./user/template/layout.html.eex"
+    index_layout = "./lib/template/layout.html.eex"
     layout_code = EEx.eval_file(index_layout, titels_href: file_index)
     File.write(dst_path <> "index.html", layout_code)
 
     copy_resources("#{src_path}img", "#{dst_path}img")
-    copy_resources("./user/assets/css", "#{dst_path}css")
-    copy_resources("./user/assets/js", "#{dst_path}js")
+    copy_resources("./assets/css", "#{dst_path}css")
+    copy_resources("./assets/js", "#{dst_path}js")
     log_issue()
   end
 

@@ -39,7 +39,7 @@ defmodule Mix.Tasks.Gen.HtmlTest do
       |> Enum.map(fn f -> in_p <> f end)
 
     # todo move this to config
-    page_layout = "./user/template/page.html.eex"
+    page_layout = "./lib/template/page.html.eex"
 
     # each element in the list is of the type:
     # {:ok, html_docs, deprecation_messages}
