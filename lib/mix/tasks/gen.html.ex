@@ -55,9 +55,9 @@ defmodule Mix.Tasks.Gen.Html do
     # create page index with files name as title
     # and the file location as href link
     file_index = make_page_index(html_files)
-
+    navbar = load_navbar("#{src_path}../navbar.json")
     index_layout = "./lib/template/layout.html.eex"
-    layout_code = EEx.eval_file(index_layout, titels_href: file_index)
+    layout_code = EEx.eval_file(index_layout, titels_href: file_index, navbar: navbar)
     File.write(dst_path <> "index.html", layout_code)
 
     copy_resources("#{src_path}img", "#{dst_path}img")
@@ -218,6 +218,17 @@ defmodule Mix.Tasks.Gen.Html do
         {error, reason} ->
           IO.puts("Failed creating output dir #{path}.\n#{error}: #{reason}")
       end
+    end
+  end
+
+  defp load_navbar(path_json) do
+    if File.exists? path_json do
+      path_json
+      |> File.read!
+      |> Jason.decode!
+      |> Map.to_list
+    else
+      %{}
     end
   end
 end

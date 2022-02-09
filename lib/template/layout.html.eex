@@ -2,44 +2,39 @@
 <!doctype html>
 <html>
 <head>
-  <meta charset="UTF-8">
   <title>Brain-off</title>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="css/uikit.min.css" />
-  <link rel="stylesheet" href="css/app.css" />
-  <script src="js/uikit.min.js"></script>
-  <script src="js/uikit-icons.min.js"></script>
+  <link href="css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-  <nav class="uk-navbar-container" uk-navbar>
-    <div class="uk-navbar-center">
-      <ul class="uk-navbar-nav">
-        <li class="uk-parent"><a href="#">Times</a></li>
-        <li class="uk-parent"><a href="#">Jira</a></li>
-        <li class="uk-parent"><a href="#">Bitbucket</a></li>
-        <li class="uk-parent"><a href="#">Confluence</a></li>
-        <li class="uk-parent"><a href="#">Jenkins</a></li>
-        <li class="uk-parent"><a href="#">PTC</a></li>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <%= for {title, link} <- navbar do %>
+        <li class="nav-item">
+          <a class="nav-link" href="<%= link %>"><%= title %></a>
+        </li>
+      <% end %>
       </ul>
     </div>
   </nav>
 
-  <main role="main" class="grow flex flex-col h-screen">
-
-    <div class="uk-child-width-1-2@s" uk-grid>
-      <div>
-          <ul class="uk-tab-right" uk-tab>
-            <%= for {title, href} <- titels_href do %>
-              <li class="uk-active"><a href="<%= href %>"><%= title %></a></li>
-            <% end %>
-          </ul>
-      </div>
+  <main class="p-2" role="main" class="container-fluid">
+    <div class="card" style="width: 18rem;">
+      <ul class="list-group list-group-flush">
+        <%= for {title, link} <- titels_href do %>
+          <li class="list-group-item"><a href="<%= link %>"><%= title %></a></li>
+        <% end %>
+      </ul>
     </div>
   </main>
-  <footer>
-  <p uk-text-muted>
+
+  <footer class="p-2">
+  <p>
   Genereted <%= DateTime.utc_now |> DateTime.to_string %>
   </p>
   </footer>
+  <script src="js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

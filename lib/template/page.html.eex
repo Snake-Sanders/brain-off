@@ -2,27 +2,29 @@
 <!doctype html>
 <html>
 <head>
-  <meta charset="UTF-8">
   <title>Brain-off</title>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="css/uikit.min.css" />
-  <link rel="stylesheet" href="css/app.css" />
-  <script src="js/uikit.min.js"></script>
-  <script src="js/uikit-icons.min.js"></script>
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/app.css" rel="stylesheet">
 </head>
 <body>
-  <nav class="uk-navbar-container" uk-navbar>
-      <div class="uk-navbar-right">
-        <ul class="uk-navbar-nav">
-          <li class="uk-parent"><a href="index.html">Back to main</a></li>
-        </ul>
-      </div>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <li class="nav-item">
+        <a class="nav-link" href="index.html">Back</a>
+      </li>
+    </ul>
+    </div>
   </nav>
-  <main role="main" class="grow flex flex-col h-screen">
+
+  <main role="main" class="container-fluid">
     <%= page_content %>
   </main>
   <footer>
   Genereted <!-- <% DateTime.utc_now |> DateTime.to_string %>= -->
   </footer>
+  <script src="js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -22,7 +22,9 @@ defmodule Tools.MixProject do
   defp deps do
     [
       # Markdown conversion to html
-      {:earmark, "~> 1.4"}
+      {:earmark, "~> 1.4"},
+      # Json parser, for reading navbar config
+      {:jason, "~> 1.2"}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
     ]
