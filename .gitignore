@@ -28,12 +28,11 @@ tools-*.tar
 # test temp folder
 /test/output
 
-# ignore dev tools
-tailwind/
+# ignore development tools
+dev/
 
 # ignore user's notes files
 user/markdown/*.md
 
 # ignore generated pages
 user/web/
-

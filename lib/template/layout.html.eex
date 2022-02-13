@@ -15,10 +15,10 @@
 <body class="bg-light">
   <div class="container">
 
-    <div class="py-5 text-center">
+    <div class="py-2 text-center">
       <ul class="nav nav-pills nav-fill">
         <%= for {title, link} <- navbar do %>
-          <li class="nav-item">
+          <li class="nav-item m-2 border border-primary rounded">
             <a class="nav-link" href="<%= link %>" target="_blank"><%= title %></a>
           </li>
         <% end %>
@@ -88,10 +88,10 @@
     </div>
     <!-- end row -->
 
-    <footer class="my-5 pt-5 text-muted text-left text-small">
-      <div class="fs-6 fw-lighter">
-        <p class="mb-1">Genereted <%= DateTime.utc_now |> DateTime.to_string %></p>
+    <footer class="my-5 bg-primary p-2 border border-light rounded" style="--bs-bg-opacity: .1;">
+      <div class="fs-6 text-muted text-left text-small">
         <p><a href="https://www.flaticon.com/free-icons/think" title="think icons">Think icons created by Freepik - Flaticon</a></p>
+        <p class="mb-1">Genereted <%= DateTime.utc_now |> DateTime.to_string %></p>
       </div>
     </footer>
 
