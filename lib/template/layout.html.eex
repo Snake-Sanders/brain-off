@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html>
 <head>
@@ -6,35 +5,106 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/app.css" rel="stylesheet">
 </head>
-<body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-      <%= for {title, link} <- navbar do %>
-        <li class="nav-item">
-          <a class="nav-link" href="<%= link %>"><%= title %></a>
-        </li>
-      <% end %>
-      </ul>
-    </div>
-  </nav>
+<body class="bg-light">
+  <div class="container">
 
-  <main class="p-2" role="main" class="container-fluid">
-    <div class="card" style="width: 18rem;">
-      <ul class="list-group list-group-flush">
-        <%= for {title, link} <- titels_href do %>
-          <li class="list-group-item"><a href="<%= link %>"><%= title %></a></li>
+    <div class="py-5 text-center">
+      <ul class="nav nav-pills nav-fill">
+        <%= for {title, link} <- navbar do %>
+          <li class="nav-item">
+            <a class="nav-link" href="<%= link %>" target="_blank"><%= title %></a>
+          </li>
         <% end %>
       </ul>
     </div>
-  </main>
 
-  <footer class="p-2">
-  <p>
-  Genereted <%= DateTime.utc_now |> DateTime.to_string %>
-  </p>
-  </footer>
+  <div class="row">
+
+    <!-- card how-tos-->
+    <div class="col">
+      <div class="card" style="width: 18rem;">
+        <div class="card-header">
+          How-To articles
+        </div>
+        <ul class="list-group list-group-flush">
+            <%= for {title, link} <- titels_href do %>
+              <li class="list-group-item"><a href="<%= link %>"><%= title %></a></li>
+            <% end %>
+        </ul>
+      </div>
+    </div>
+
+    <!-- card dailys-->
+    <div class="col">
+      <div class="card" style="width: 18rem;">
+        <div class="card-header">
+          Daily
+        </div>
+        <ul class="list-group list-group-flush">
+          <%= for {title, link} <- daily_links do %>
+          <li class="list-group-item"><a target="_blank" href="<%= link %>"><%= title %></a></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+
+    <!-- card copy items -->
+    <div class="col">
+      <div class="card" style="width: 18rem;">
+        <div class="card-header">
+          Copy
+        </div>
+        <ul class="list-group list-group-flush">
+          <%= for %{"id" => id, "name" => name, "is_hidden" => is_hidden, "text" => text } <- copy_buttons do %>
+            <li class="list-group-item">
+              <%= if is_hidden do %>
+              <p>
+                <!-- hidden text is embedded within the button-->
+                <button class="btn btn-xs btn-info" data-clipboard-text="<%= text %>">
+                  <img src="img/clipboard.svg" alt="Copy" width="24px" height="24px">
+                  <span class="sm"><%= name %></span>
+                </button>
+              </p>
+              <% else %>
+              <p>
+                <button class="btn btn-xs btn-warning" data-clipboard-target="#<%= id %>">
+                  <img src="img/clipboard.svg" alt="Copy" width="24px" height="24px">
+                  <span class="sm"><%= name %></span>
+                </button>
+                <span id="<%= id %>" value="<%= text %>"><%= text %></span>
+              </p>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+    <!-- end row -->
+
+    <footer class="my-5 pt-5 text-muted text-left text-small">
+      <p class="mb-1">Genereted <%= DateTime.utc_now |> DateTime.to_string %></p>
+    </footer>
+
+  </div><!-- body container-->
+
   <script src="js/bootstrap.bundle.min.js"></script>
+  <script src="js/clipboard.min.js"></script>
+  <script>
+    var clipboard = new ClipboardJS('.btn');
+
+    clipboard.on('success', function (e) {
+      console.info('Action:', e.action);
+      console.info('Text:', e.text);
+      console.info('Trigger:', e.trigger);
+    });
+
+    clipboard.on('error', function (e) {
+      console.info('Action:', e.action);
+      console.info('Text:', e.text);
+      console.info('Trigger:', e.trigger);
+    });
+  </script>
 </body>
 </html>

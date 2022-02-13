@@ -15,6 +15,7 @@ defmodule Mix.Tasks.Gen.Html do
   use Mix.Task
   require Earmark
   require EEx
+  require Jason
 
   # records parsing errors, see log_issue/0
   @issue_recorder []
@@ -52,17 +53,31 @@ defmodule Mix.Tasks.Gen.Html do
         write_out_html_file({md_file, html_content}, dst_path)
       end)
 
-    # create page index with files name as title
+    # creates the page index with files name as title
     # and the file location as href link
     file_index = make_page_index(html_files)
-    navbar = load_navbar("#{src_path}../navbar.json")
+
+    # loads the navigation bar buttons
+    navbar = load_json("#{src_path}../navbar.json") |> Map.to_list
+
+    # loads copy buttons
+    copy_buttons = load_json("#{src_path}../copy_btn.json") |> Map.fetch!("buttons")
+    daily_links = load_json("#{src_path}../daily.json") |> Map.to_list
+
+    # puts all the pices together to pass it to the parser
+    layout_content = [titels_href: file_index,
+                      navbar: navbar,
+                      daily_links: daily_links,
+                      copy_buttons: copy_buttons]
+
     index_layout = "./lib/template/layout.html.eex"
-    layout_code = EEx.eval_file(index_layout, titels_href: file_index, navbar: navbar)
+    layout_code = EEx.eval_file(index_layout, layout_content)
     File.write(dst_path <> "index.html", layout_code)
 
     copy_resources("#{src_path}img", "#{dst_path}img")
     copy_resources("./assets/css", "#{dst_path}css")
     copy_resources("./assets/js", "#{dst_path}js")
+    copy_resources("./assets/img", "#{dst_path}img")
     log_issue()
   end
 
@@ -221,14 +236,14 @@ defmodule Mix.Tasks.Gen.Html do
     end
   end
 
-  defp load_navbar(path_json) do
+  defp load_json(path_json) do
     if File.exists? path_json do
       path_json
       |> File.read!
       |> Jason.decode!
-      |> Map.to_list
     else
       %{}
     end
   end
+
 end

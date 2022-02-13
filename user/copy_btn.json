@@ -1,0 +1,21 @@
+{
+    "buttons": [{
+            "id": "btn_1",
+            "name": "",
+            "is_hidden": false,
+            "text": "text 1 to be copied"
+        },
+        {
+            "id": "btn_2",
+            "name": "",
+            "is_hidden": false,
+            "text": "text 2 to be copied"
+        },
+        {
+            "id": "btn_3",
+            "name": "copy hidden text",
+            "is_hidden": true,
+            "text": "secret text to be copied"
+        }
+    ]
+}
