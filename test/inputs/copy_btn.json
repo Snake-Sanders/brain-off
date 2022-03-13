@@ -1,0 +1,15 @@
+{
+    "buttons": [{
+            "id": "btn_1",
+            "name": "",
+            "is_hidden": false,
+            "text": "Demo button 1"
+        },
+        {
+            "id": "btn_2",
+            "name": "copy hidden text",
+            "is_hidden": true,
+            "text": "Demo button 2"
+        }
+    ]
+}
