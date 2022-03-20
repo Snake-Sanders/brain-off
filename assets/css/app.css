@@ -1,48 +1,6 @@
-/* body {
-  margin-top: 0.5em;
-  margin-right: 2em;
-  margin-left: 2em;
-}
-
-h1, h2, h3,  h4,  h5,  h6 {
-  margin-top: 0.5em;
-  margin-left: 1px;
-}
-*/
-
-pre {
-    margin-top: 2px;
-    margin-bottom: 2px;
-    border: 2px;
-    border-color: #568bdb;
-    padding: 14px;
-    background-color: #f7f9fc;
-}
-
-code {
-    border: 1px;
-    font-family: Inconsolata, Menlo, Courier, monospace;
-    font-weight: 400;
-    font-size: 1em;
-    font-style: normal;
-    line-height: 24px;
-}
-
-.content-inner code {
-    background-color: #e2ecfa;
-    vertical-align: baseline;
-    border-radius: 2px;
-    padding: .1em .2em;
-    border: 1px solid #a1bee9;
-    text-transform: none
-}
-
 .container {
     max-width: 960px;
 }
-
-
-/* copy button styles */
 
 
 /* the temporary text area created for copying to clipboard
@@ -52,4 +10,18 @@ show white flashings */
 textarea .copy-txt-area {
     position: absolute;
     left: -100%;
+}
+
+button .copy-button {
+    position: absolute;
+    top: .65rem;
+    right: .65rem;
+    z-index: 10;
+    display: block;
+    padding: .25rem .5rem;
+    font-size: .65em;
+    color: #0d6efd;
+    background-color: #fff;
+    border: 1px solid;
+    border-radius: .25rem;
 }
