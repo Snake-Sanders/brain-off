@@ -121,7 +121,6 @@ defmodule Mix.Tasks.Gen.Html do
     |> Path.absname()
     |> File.read!()
     |> Earmark.as_html()
-    |> add_copy_buttons()
   end
 
   # Opens a list of markdown files and convert the content to HTML.
@@ -249,18 +248,4 @@ defmodule Mix.Tasks.Gen.Html do
     end
   end
 
-  # Expect an html code block.
-  # Adds a copy button under each code bock labled with `pre` node
-  defp add_copy_buttons({:ok, html}) do
-    idx = 0
-
-    Regex.replace(
-      ~r/<pre>/,
-      html,
-      "<button id=\"btn-#{idx}\" class=\".cpy-btn\">Copy</button><pre id=\"code-#{idx}\">"
-    )
-  end
-
-  # do not replace pre in error cases
-  defp add_copy_buttons(other), do: other
 end
