@@ -58,17 +58,19 @@ defmodule Mix.Tasks.Gen.Html do
     file_index = make_page_index(html_files)
 
     # loads the navigation bar buttons
-    navbar = load_json("#{src_path}../navbar.json") |> Map.to_list
+    navbar = load_json("#{src_path}../navbar.json") |> Map.to_list()
 
     # loads copy buttons
     copy_buttons = load_json("#{src_path}../copy_btn.json") |> Map.fetch!("buttons")
-    daily_links = load_json("#{src_path}../daily.json") |> Map.to_list
+    daily_links = load_json("#{src_path}../daily.json") |> Map.to_list()
 
     # puts all the pices together to pass it to the parser
-    layout_content = [titels_href: file_index,
-                      navbar: navbar,
-                      daily_links: daily_links,
-                      copy_buttons: copy_buttons]
+    layout_content = [
+      titels_href: file_index,
+      navbar: navbar,
+      daily_links: daily_links,
+      copy_buttons: copy_buttons
+    ]
 
     index_layout = "./lib/template/layout.html.eex"
     layout_code = EEx.eval_file(index_layout, layout_content)
@@ -119,6 +121,7 @@ defmodule Mix.Tasks.Gen.Html do
     |> Path.absname()
     |> File.read!()
     |> Earmark.as_html()
+    |> add_copy_buttons()
   end
 
   # Opens a list of markdown files and convert the content to HTML.
@@ -237,13 +240,27 @@ defmodule Mix.Tasks.Gen.Html do
   end
 
   defp load_json(path_json) do
-    if File.exists? path_json do
+    if File.exists?(path_json) do
       path_json
-      |> File.read!
-      |> Jason.decode!
+      |> File.read!()
+      |> Jason.decode!()
     else
       %{}
     end
   end
 
+  # Expect an html code block.
+  # Adds a copy button under each code bock labled with `pre` node
+  defp add_copy_buttons({:ok, html}) do
+    idx = 0
+
+    Regex.replace(
+      ~r/<pre>/,
+      html,
+      "<button id=\"btn-#{idx}\" class=\".cpy-btn\">Copy</button><pre id=\"code-#{idx}\">"
+    )
+  end
+
+  # do not replace pre in error cases
+  defp add_copy_buttons(other), do: other
 end

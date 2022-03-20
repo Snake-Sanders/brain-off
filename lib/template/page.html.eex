@@ -7,13 +7,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/app.css" rel="stylesheet">
+  <script defer src="js/copy-btn.js"></script>
+
   <!-- favicon -->
   <link rel="apple-touch-icon" sizes="180x180" href="img/favicon_io/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="img/favicon_io/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="img/favicon_io/favicon-16x16.png">
   <link rel="manifest" href="img/favicon_io/site.webmanifest">
 </head>
-<body>
+<body class="bg-light">
+  <div class="container">
+
   <button class="border border-primary rounded">
     <a href="index.html">Back</a>
   </button>
@@ -22,8 +26,9 @@
     <%= page_content %>
   </main>
   <footer>
-  Genereted <!-- <% DateTime.utc_now |> DateTime.to_string %>= -->
+  Genereted <%= DateTime.utc_now |> DateTime.to_string %>
   </footer>
   <script src="js/bootstrap.bundle.min.js"></script>
+  </div>
 </body>
 </html>

@@ -29,14 +29,27 @@ code {
 }
 
 .content-inner code {
-    background-color: #f7f9fc;
+    background-color: #e2ecfa;
     vertical-align: baseline;
     border-radius: 2px;
     padding: .1em .2em;
-    border: 1px solid #d2ddee;
+    border: 1px solid #a1bee9;
     text-transform: none
 }
 
 .container {
     max-width: 960px;
+}
+
+
+/* copy button styles */
+
+
+/* the temporary text area created for copying to clipboard
+has an offset out of the main view in case the creation and destruction
+show white flashings */
+
+textarea .copy-txt-area {
+    position: absolute;
+    left: -100%;
 }

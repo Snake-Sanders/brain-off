@@ -98,6 +98,7 @@
   </div><!-- body container-->
 
   <script src="js/bootstrap.bundle.min.js"></script>
+  <script src="js/copy-btn.js"></script>
   <script src="js/clipboard.min.js"></script>
   <script>
     var clipboard = new ClipboardJS('.btn');
