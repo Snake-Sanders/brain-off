@@ -1,5 +1,7 @@
 defmodule Mix.Tasks.Gen.HtmlTest do
   use ExUnit.Case, async: true
+  require Floki
+
   doctest Tools
 
   setup do
@@ -20,6 +22,22 @@ defmodule Mix.Tasks.Gen.HtmlTest do
 
     assert String.starts_with?(html_doc, "<h1>\ntable of content</h1>")
     assert deprecation_messages == []
+  end
+
+  test "parsing a md file with code blocks", %{in_p: in_p} = _ctx do
+    md_file = in_p <> "demo5.md"
+    {:ok, html_doc, deprecation_messages} = Mix.Tasks.Gen.Html.convert_file(md_file)
+    assert deprecation_messages == []
+
+    # using Floki to parse html
+    {:ok, doc} = Floki.parse_document(html_doc)
+
+    # there should be 3 code blocks
+    pre_items = Floki.find(doc, "pre")
+    assert length(pre_items) == 3
+
+    code_items = Floki.find(doc, "code")
+    assert length(code_items) == 3
   end
 
   # @tag :skip
