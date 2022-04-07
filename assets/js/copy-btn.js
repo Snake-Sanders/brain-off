@@ -33,6 +33,8 @@ function fnAddCopyButtons() {
         btn.className = "copy-button";
         // add button bootstrap style
         btn.className += " nav-item m-2 border border-primary rounded";
+        btn.style = "position: absolute; top:10; right:0;"
+        preTag.style = "background-color: #e6edf4; border-radius: 5px;"
 
         // when the button is clicked it will call the fnCopyText function
         btn.addEventListener('click', function() { fnCopyText(codeTag.id) });
